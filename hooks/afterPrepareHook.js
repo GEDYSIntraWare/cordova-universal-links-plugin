@@ -5,13 +5,14 @@ It will inject required preferences in the platform-specific projects, based on 
 data you have specified in the projects config.xml file.
 */
 
-var configParser = require('./lib/configXmlParser.js');
+const path = require('node:path');
+
 var androidManifestWriter = require('./lib/android/manifestWriter.js');
 var androidWebHook = require('./lib/android/webSiteHook.js');
 var iosProjectEntitlements = require('./lib/ios/projectEntitlements.js');
 var iosAppSiteAssociationFile = require('./lib/ios/appleAppSiteAssociationFile.js');
-var ANDROID = 'android';
-var IOS = 'ios';
+const ExtendedConfigParser = require('./lib/ExtendedConfigParser.js');
+const { CONFIG_FILE_NAME, PLATFORM_ANDROID, PLATFORM_IOS } = require('./lib/constants.js')
 
 module.exports = function(ctx) {
   run(ctx);
@@ -23,32 +24,30 @@ module.exports = function(ctx) {
  * @param {Object} cordovaContext - cordova context object
  */
 function run(cordovaContext) {
-  var pluginPreferences = configParser.readPreferences(cordovaContext);
+  const configFilePath = path.join(cordovaContext.opts.projectRoot, CONFIG_FILE_NAME);
+  const configFile = new ExtendedConfigParser(configFilePath);
+  const pluginPreferences = configFile.getUniversalLinks();
   var platformsList = cordovaContext.opts.platforms;
 
   // if no preferences are found - exit
-  if (pluginPreferences == null) {
+  if (!pluginPreferences) {
     return;
   }
 
   // if no host is defined - exit
-  if (pluginPreferences.hosts == null || pluginPreferences.hosts.length == 0) {
+  if (pluginPreferences.hosts === null || pluginPreferences.hosts.length === 0) {
     console.warn('No host is specified in the config.xml. Universal Links plugin is not going to work.');
     return;
   }
 
   platformsList.forEach(function(platform) {
     switch (platform) {
-      case ANDROID:
-        {
+      case PLATFORM_ANDROID:
           activateUniversalLinksInAndroid(cordovaContext, pluginPreferences);
           break;
-        }
-      case IOS:
-        {
+      case PLATFORM_IOS:
           activateUniversalLinksInIos(cordovaContext, pluginPreferences);
           break;
-        }
     }
   });
 }
@@ -74,7 +73,6 @@ function activateUniversalLinksInAndroid(cordovaContext, pluginPreferences) {
  * @param {Object} pluginPreferences - plugin preferences from the config.xml file. Basically, content from <universal-links> tag.
  */
 function activateUniversalLinksInIos(cordovaContext, pluginPreferences) {
-
   // generate entitlements file
   iosProjectEntitlements.generateAssociatedDomainsEntitlements(cordovaContext, pluginPreferences);
 

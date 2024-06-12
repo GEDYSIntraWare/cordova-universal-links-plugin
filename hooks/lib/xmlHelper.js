@@ -2,7 +2,7 @@
 Small helper class to read/write from/to xml file.
 */
 
-var fs = require('fs');
+var fs = require('node:fs');
 var xml2js = require('xml2js');
 
 module.exports = {

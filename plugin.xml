@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin id="cordova-universal-links-plugin" version="1.2.1" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+<plugin id="@gedysintraware/cordova-universal-links-plugin" version="2.0.0-GI" xmlns="http://apache.org/cordova/ns/plugins/1.0">
 
   <name>Universal Links Plugin</name>
   <description>
@@ -25,11 +25,8 @@
 
 <!-- Hooks -->
   <hook src="hooks/afterPrepareHook.js" type="after_prepare"/>
-  <hook src="hooks/beforePluginInstallHook.js" type="before_plugin_install" />
 
   <platform name="ios">
-    <hook src="hooks/iosBeforePrepareHook.js" type="before_prepare" />
-
 <!-- Plugin inclusion in Cordova config.xml  -->
     <config-file parent="/*" target="config.xml">
       <feature name="UniversalLinks">

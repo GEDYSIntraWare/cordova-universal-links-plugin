@@ -1,6 +1,6 @@
 {
   "name": "@gedysintraware/cordova-universal-links-plugin",
-  "version": "1.2.1-GI",
+  "version": "2.0.0-GI",
   "description": "Cordova plugin to add in your application support for Universal Links (iOS 9) and Deep Links (Android). Basically, open application through the link in the browser.",
   "cordova": {
     "id": "cordova-universal-links-plugin",
@@ -26,14 +26,15 @@
     "android"
   ],
   "dependencies": {
-    "mkpath": ">=1.0.0",
-    "xml2js": ">=0.4",
-    "rimraf": ">=2.4",
-    "node-version-compare": ">=1.0.1",
-    "plist": ">=1.2.0"
+    "cordova-common": "^5.0.0",
+    "plist": "^3.1.0",
+    "xml2js": "^0.6.2"
   },
   "author": "Nikolay Demyankov for Nordnet Bank AB",
   "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
   "bugs": {
     "url": "https://github.com/gedysintraware/cordova-universal-links-plugin/issues"
   }

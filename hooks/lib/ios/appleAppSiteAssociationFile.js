@@ -17,11 +17,12 @@ Additional documentation regarding apple-app-site-association file can be found 
 */
 
 
-var path = require('path');
-var mkpath = require('mkpath');
-var fs = require('fs');
-var rimraf = require('rimraf');
-var ConfigXmlHelper = require('../configXmlHelper.js');
+var path = require('node:path');
+var fs = require('node:fs');
+
+const ExtendedConfigParser = require('../ExtendedConfigParser.js');
+const { CONFIG_FILE_NAME, PLATFORM_IOS } = require('../constants.js');
+
 var IOS_TEAM_ID = '<YOUR_TEAM_ID_FROM_MEMBER_CENTER>';
 var ASSOCIATION_FILE_NAME = 'apple-app-site-association';
 var bundleId;
@@ -53,7 +54,7 @@ function generate(cordovaContext, pluginPreferences) {
  * Remove old files from ul_web_hooks/ios folder.
  */
 function removeOldFiles() {
-  rimraf.sync(getWebHookDirectory());
+  fs.rmSync(getWebHookDirectory(), { recursive: true, force: true });
 }
 
 /**
@@ -128,7 +129,7 @@ function saveContentToFile(filePrefix, content) {
  */
 function createDirectoriesIfNeeded(dirPath) {
   try {
-    mkpath.sync(dirPath);
+    fs.mkdirSync(dirPath, { recursive: true });
   } catch (err) {
     console.log(err);
   }
@@ -163,8 +164,9 @@ function getProjectRoot() {
  */
 function getBundleId() {
   if (bundleId === undefined) {
-    var configXmlHelper = new ConfigXmlHelper(context);
-    bundleId = configXmlHelper.getPackageName('ios');
+    const configFilePath = path.join(getProjectRoot(), CONFIG_FILE_NAME);
+    const configFile = new ExtendedConfigParser(configFilePath);
+    bundleId = configFile.getPackageName(PLATFORM_IOS);
   }
 
   return bundleId;
