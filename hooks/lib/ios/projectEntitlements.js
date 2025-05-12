@@ -139,7 +139,12 @@ function domainsListEntryForHost(host) {
  * @return {String} absolute path to entitlements file
  */
 function pathToEntitlementsFile() {
-  return path.join(getProjectRoot(), 'platforms/ios/', getProjectName());
+  const projectRoot = context.opts.projectRoot;
+  const platformPath = path.join(projectRoot, 'platforms', 'ios');
+  const cordova_ios = require('cordova-ios');
+  const iosProject = new cordova_ios('ios', platformPath);
+  const infoPlistPath = path.join(iosProject.locations.xcodeCordovaProj);
+  return infoPlistPath;
 }
 
 /**
