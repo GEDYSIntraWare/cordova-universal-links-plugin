@@ -37,7 +37,7 @@ function createPluginInstalledFlag(ctx) {
 }
 // endregion
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
   if (isInstallationAlreadyPerformed(ctx)) {
     return;
   }
@@ -46,7 +46,9 @@ module.exports = function(ctx) {
   console.log(JSON.stringify(pluginNpmDependencies, null, 2));
 
   var npm = (process.platform === "win32" ? "npm.cmd" : "npm");
-  var result = spawnSync(npm, ['install', '--production'], { cwd: './plugins/' + ctx.opts.plugin.id });
+
+  var pluginPath = path.join(ctx.opts.projectRoot, 'plugins', ctx.opts.plugin.id);
+  var result = spawnSync(npm, ['install', '--production'], { cwd: pluginPath, shell: true });
   if (result.error) {
     throw result.error;
   }
