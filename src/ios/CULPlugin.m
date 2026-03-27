@@ -33,12 +33,20 @@
     // Just uncomment, close the app and reopen it. That will simulate application launch from the link.
 //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume:) name:UIApplicationWillEnterForegroundNotification object:nil];
     
-    // Restore previous url if found
+    // Restore URL saved during cold launch (by scene:willConnectToSession:options:)
+    // or from a previous run that was interrupted before the event could be consumed.
     self->userDefaults = [[NSUserDefaults alloc] init];
     NSURL *url = [self->userDefaults URLForKey:@"CULTmpURL"];
     if (url) {
+        NSLog(@"[UniversalLinks] pluginInitialize: found stored URL: %@", url);
         CULHost *host = [self findHostByURL:url];
-        [self storeEventWithHost:host originalURL:url];
+        if (host != nil) {
+            [self storeEventWithHost:host originalURL:url];
+        } else {
+            // URL does not match any configured host — clear the stale entry
+            NSLog(@"[UniversalLinks] pluginInitialize: no matching host for URL, clearing NSUserDefaults entry");
+            [self->userDefaults removeObjectForKey:@"CULTmpURL"];
+        }
     }
 }
 
